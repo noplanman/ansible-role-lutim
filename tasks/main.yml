@@ -1,0 +1,8 @@
+---
+
+- include: install.yml
+  tags: lutim.install
+- include: site.yml
+  tags: lutim.site
+- include: service.yml
+  tags: lutim.service

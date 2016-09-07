@@ -1,0 +1,35 @@
+---
+
+- name: Lutim | Create working directory
+  file:
+    dest: "{{ lutim_site.working_dir }}"
+    state: directory
+
+- name: Lutim | Checkout git repository
+  git:
+    repo: https://framagit.org/luc/lutim.git
+    dest: "{{ lutim_site.working_dir }}"
+    update: no
+  notify: restart lutim
+
+- name: Lutim | Copy config
+  template:
+    src: lutim.conf.j2
+    dest: "{{ lutim_site.working_dir }}/lutim.conf"
+    mode: 0644
+  notify: restart lutim
+
+- name: Lutim | Install lutim
+  command: carton install
+  args:
+    chdir: "{{ lutim_site.working_dir }}"
+    creates: "{{ lutim_site.working_dir }}/lutim.db"
+  notify: restart lutim
+
+- name: Lutim | Set permissions on working directory
+  file:
+    path: "{{ lutim_site.working_dir }}"
+    state: directory
+    owner: "{{ lutim_user }}"
+    group: "{{ lutim_group }}"
+    recurse: yes

@@ -1,0 +1,14 @@
+---
+
+- name: Lutim | Install build-essentials
+  apt: name=build-essential state=present update_cache=yes cache_valid_time=3600
+
+- name: Lutim | Install cpanm
+  command: "curl -L http://cpanmin.us | perl - App::cpanminus"
+  args:
+    creates: /usr/local/bin/cpanm
+
+- name: Lutim | Install Carton
+  command: "cpanm Carton"
+  args:
+    creates: /usr/local/bin/carton
