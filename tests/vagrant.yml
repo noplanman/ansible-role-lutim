@@ -1,0 +1,13 @@
+---
+- hosts: all
+  remote_user: vagrant
+  become: yes
+  roles:
+    - ../../
+  vars:
+    lutim_site:
+      host: "example.com"
+      working_dir: "/var/www/example.com"
+      listen: "http://127.0.0.1:8080"
+      contact: "admin@example.com"
+      secrets: ["array", "of", "random", "secrets"]
