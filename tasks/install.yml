@@ -1,7 +1,11 @@
 ---
 
-- name: Lutim | Install build-essentials
-  apt: name=build-essential state=present update_cache=yes cache_valid_time=3600
+- name: Lutim | Install essentials
+  apt: name="{{ item }}" state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - build-essential
+    - git
+    - libssl-dev
 
 - name: Lutim | Install cpanm
   get_url:

@@ -1,10 +1,13 @@
 ---
 
-- name: Lutim | Install service
+- name: Lutim | Copy service config
   template:
-    src: lib/systemd/system/lutim.service.j2
-    dest: "/lib/systemd/system/lutim.service"
+    src: etc/default/lutim.j2
+    dest: "/etc/default/lutim"
     owner: root
     group: root
     mode: 0644
-  notify: reload systemd daemons
+  notify: restart lutim
+
+- name: Lutim | Copy upstart config
+  command: creates=/etc/init/lutim.conf cp {{ lutim_site.working_dir }}/utilities/lutim_upstart.conf /etc/init/lutim.conf

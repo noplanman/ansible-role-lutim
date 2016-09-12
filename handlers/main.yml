@@ -1,8 +1,4 @@
 ---
 
-- name: reload systemd daemons
-  command: systemctl daemon-reload
-  notify: restart lutim
-
 - name: restart lutim
   service: name=lutim state=restarted enabled=yes
