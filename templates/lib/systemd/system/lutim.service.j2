@@ -1,0 +1,18 @@
+[Unit]
+Description=Image hosting and sharing service
+Documentation=https://framagit.org/luc/lutim
+Requires=network.target
+After=network.target
+
+[Service]
+Type=forking
+User={{ lutim_user }}
+RemainAfterExit=yes
+WorkingDirectory={{ lutim_site.working_dir }}/
+PIDFile={{ lutim_site.working_dir }}/script/hypnotoad.pid
+ExecStart=/usr/local/bin/carton exec hypnotoad script/lutim
+ExecStop=/usr/local/bin/carton exec hypnotoad -s script/lutim
+ExecReload=/usr/local/bin/carton exec hypnotoad script/lutim
+
+[Install]
+WantedBy=multi-user.target
