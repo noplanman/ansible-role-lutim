@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 # vim:set sw=4 ts=4 sts=4 ft=perl expandtab:
 {
     ####################
@@ -6,10 +8,11 @@
     # see http://mojolicio.us/perldoc/Mojo/Server/Hypnotoad for a full list of settings
     hypnotoad => {
         # array of IP addresses and ports you want to listen to
-        listen => ['{{ lutim_site.listen }}'],
+        listen => ['{{ lutim_listen }}'],
         # if you use Lutim behind a reverse proxy like Nginx, you want to set proxy to 1
         # if you use Lutim directly, let it commented
         #proxy  => 1,
+        proxy => {{ lutim_proxy | ternary(1,0) }},
     },
 
     ################
@@ -18,60 +21,68 @@
 
     # put a way to contact you here and uncomment it
     # mandatory
-    contact       => '{{ lutim_site.contact }}',
+    #contact       => 'admin[at]example.com',
+    contact => '{{ lutim_contact }}',
 
     # random string used to encrypt cookies
     # mandatory
-    secrets        => {{ lutim_site.secrets | to_json }},
+    #secrets        => ['fdjsofjoihrei'],
+    secrets => {{ lutim_secrets | to_json }},
 
     # choose a theme. See the available themes in `themes` directory
     # optional, default is 'default'
-{% if lutim_site.theme is defined %}
-    theme         => '{{ lutim_site.theme }}',
-{% endif %}
+    #theme         => 'default',
+    theme => '{{ lutim_theme }}',
 
     # length of the images random URL
     # optional, default is 8
     #length            => 8,
+    length => {{ lutim_url_length }},
 
     # length of the encryption key
     # optional, default is 8
     #crypto_key_length => 8,
+    crypto_key_length => {{ lutim_crypto_key_length }},
 
     # how many URLs will be provisioned in a batch ?
     # optional, default is 5
     #provis_step       => 5,
+    provis_step => {{ lutim_provis_step }},
 
     # max number of URLs to be provisioned
     # optional, default is 100
     #provisioning      => 100,
+    provisioning => {{ lutim_provisioning }},
 
     # anti-flood protection delay, in seconds
     # users won't be able to ask Lutim to download images more than one per anti_flood_delay seconds
     # optional, default is 5
     #anti_flood_delay  => 5,
+    anti_flood_delay => {{ lutim_anti_flood_delay }},
 
     # twitter account which will appear on twitter cards
     # see https://dev.twitter.com/docs/cards/validation/validator to register your Lutim instance on twitter
     # optional, default is @framasky
     #tweet_card_via    => '@framasky',
+    tweet_card_via => '{{ lutim_tweet_card_via }}',
 
     # max image size, in octets
     # you can write it 10*1024*1024
     # optional, default is 10485760
     #max_file_size     => 10485760,
+    max_file_size => {{ lutim_max_file_size }},
 
     # if you want to have piwik statistics, provide a piwik image tracker
     # only the image tracker is allowed, no javascript
     # optional, no default
     #piwik_img         => 'https://piwik.example.org/piwik.php?idsite=1&amp;rec=1',
+    piwik_img => '{{ lutim_piwik_img }}',
 
     # if you want to include something in the right of the screen, put it here
     # here's an exemple to put the logo of your hoster
     # optional, no default
-{% if lutim_site.hosted_by is defined %}
-    hosted_by         => '{{ lutim_site.hosted_by }}',
-{% endif %}
+    #hosted_by         => 'My super hoster <img src="http://hoster.example.com" alt="Hoster logo">',
+    hosted_by => '{{ lutim_hosted_by }}',
 
     # DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED
     # Lutim now checks if the X-Forwarded-Proto header is present and equal to https.
@@ -81,46 +92,50 @@
 
     # broadcast_message which will displayed on all pages of Lutim (but no in json response)
     # optional, no default
-{% if lutim_site.broadcast_message is defined %}
-    broadcast_message => '{{ lutim_site.broadcast_message }}',
-{% endif %}
+    #broadcast_message => 'Maintenance',
+    broadcast_message => '{{ lutim_broadcast_message }}',
 
     # array of authorized domains for API calls.
     # if you want to authorize everyone to use the API: ['*']
     # optional, no domains allowed by default
-{% if lutim_site.allowed_domains is defined %}
-    allowed_domains   => {{ lutim_site.allowed_domains | to_json }},
-{% endif %}
+    #allowed_domains   => ['http://1.example.com', 'http://2.example.com'],
+    allowed_domains => {{ lutim_allowed_domains | to_json }},
 
     # default time limit for files
     # valid values are 0, 1, 7, 30 and 365
     # optional, default is 0 (no limit)
     #default_delay     => 0,
+    default_delay => {{ lutim_default_delay }},
 
     # number of days after which the images will be deleted, even if they were uploaded with "no delay" (or value superior to max_delay)
     # a warning message will be displayed on homepage
     # optional, default is 0 (no limit)
     #max_delay         => 0,
+    max_delay => {{ lutim_max_delay }},
 
     # if set to 1, all the images will be encrypted and the encryption option will no be displayed
     # optional, default is 0
     #always_encrypt    => 0,
+    always_encrypt => {{ lutim_always_encrypt | ternary(1,0) }},
 
     # length of the image's delete token
     # optional, default is 24
     #token_length      => 24,
+    token_length => {{ lutim_token_length }},
 
     # URL sub-directory in which you want Lutim to be accessible
     # example: you want to have Lutim under https://example.org/lutim/
     # => set prefix to '/lutim' or to '/lutim/', it doesn't matter
     # optional, defaut is /
     #prefix            => '/',
+    prefix => '{{ lutim_prefix }}',
 
     # define a path to the SQLite database
     # you can define it relative to lutim directory or set an absolute path
     # remember that it has to be in a directory writable by Lutim user
     # optional, default is lutim.db
     #db_path           => 'lutim.db',
+    db_path => '{{ lutim_db_path }}',
 
     # define the height of the thumbnails generated at users' will
     # this is not the height of the thumbnails send after upload,
@@ -129,6 +144,7 @@
     # this works only if you have ImageMagick
     # optional, default is 100 (pixels)
     #thumbnail_size => 100,
+    thumbnail_size => {{ lutim_thumbnail_size }},
 
     ##########################
     # Lutim cron jobs settings
@@ -137,26 +153,30 @@
     # number of days shown in /stats page (used with script/lutim cron stats)
     # optional, default is 365
     #stats_day_num     => 365,
+    stats_day_num => {{ lutim_stats_day_num }},
 
     # number of days senders' IP addresses are kept in database
     # after that delay, they will be deleted from database (used with script/lutim cron cleanbdd)
     # optional, default is 365
     #keep_ip_during    => 365,
+    keep_ip_during => {{ lutim_keep_ip_during }},
 
     # max size of the files directory, in octets
     # used by script/lutim cron watch to trigger an action
     # optional, no default
     #max_total_size    => 10*1024*1024*1024,
+    max_total_size => {{ lutim_max_total_size }},
 
     # default action when files directory is over max_total_size (used with script/lutim cron watch)
     # valid values are 'warn', 'stop-upload' and 'delete'
     # please, see readme
     # optional, default is 'warn'
     #policy_when_full  => 'warn',
+    policy_when_full => '{{ lutim_policy_when_full }}',
 
     # images which are not viewed since delete_no_longer_viewed_files days will be deleted by the cron cleanfiles task
     # if delete_no_longer_viewed_files is not set, the no longer viewed files will NOT be deleted
     # optional, no default
     #delete_no_longer_viewed_files => 90
+    delete_no_longer_viewed_files => {{ lutim_delete_no_longer_viewed_files }},
 };
-

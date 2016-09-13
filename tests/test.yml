@@ -6,13 +6,12 @@
   vars:
     lutim_user: root
     lutim_group: root
-    lutim_site:
-      working_dir: "/var/www/lutim.example.com"
-      listen: "http://127.0.0.1:8080"
-      contact: "admin@lutim.example.com"
-      secrets: ["array", "of", "random", "secrets"]
+    lutim_working_dir: "/var/www/lutim.example.com"
+    lutim_listen: "http://127.0.0.1:8080"
+    lutim_contact: "admin@lutim.example.com"
+    lutim_secrets: ["array", "of", "random", "secrets"]
   post_tasks:
     - name: Lutim | Wait for the service to start up
       pause: seconds=5
     - name: Lutim | Check if lutim is running properly
-      uri: url={{ lutim_site.listen }}
+      uri: url={{ lutim_listen }}

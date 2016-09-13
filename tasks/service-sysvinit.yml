@@ -10,4 +10,4 @@
   notify: restart lutim
 
 - name: Lutim | Copy sysvinit config
-  command: creates=/etc/init.d/lutim cp {{ lutim_site.working_dir }}/utilities/lutim.init /etc/init.d/lutim
+  command: creates=/etc/init.d/lutim cp {{ lutim_working_dir }}/utilities/lutim.init /etc/init.d/lutim

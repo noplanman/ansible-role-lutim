@@ -1,6 +1,6 @@
 ---
 
-- name: reload systemd daemons
+- name: reload lutim systemd daemons
   command: systemctl daemon-reload
   notify: restart lutim
 

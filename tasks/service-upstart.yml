@@ -10,4 +10,4 @@
   notify: restart lutim
 
 - name: Lutim | Copy upstart config
-  command: creates=/etc/init/lutim.conf cp {{ lutim_site.working_dir }}/utilities/lutim_upstart.conf /etc/init/lutim.conf
+  command: creates=/etc/init/lutim.conf cp {{ lutim_working_dir }}/utilities/lutim_upstart.conf /etc/init/lutim.conf
