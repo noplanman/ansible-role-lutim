@@ -7,7 +7,6 @@
     lutim_user: root
     lutim_group: root
     lutim_site:
-      host: "lutim.example.com"
       working_dir: "/var/www/lutim.example.com"
       listen: "http://127.0.0.1:8080"
       contact: "admin@lutim.example.com"

@@ -7,7 +7,6 @@ lutim_group: www-data
 # Example, check the config file itself for more documentation.
 #lutim_site:
 #  # Required!
-#  host: "example.com"
 #  working_dir: "/var/www/example.com"
 #  listen: "http://127.0.0.1:8080"
 #  contact: "admin@example.com"
