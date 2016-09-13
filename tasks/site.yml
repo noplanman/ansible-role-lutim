@@ -7,7 +7,7 @@
 
 - name: Lutim | Checkout git repository
   git:
-    repo: https://framagit.org/luc/lutim.git
+    repo: https://framagit.org/noplanman/lutim.git
     dest: "{{ lutim_site.working_dir }}"
     update: no
   notify: restart lutim
