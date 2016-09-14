@@ -12,6 +12,6 @@
     lutim_secrets: ["array", "of", "random", "secrets"]
   post_tasks:
     - name: Lutim | Wait for the service to start up
-      pause: seconds=5
+      pause: seconds=11
     - name: Lutim | Check if lutim is running properly
       uri: url={{ lutim_listen }}
