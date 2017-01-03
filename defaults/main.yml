@@ -4,6 +4,8 @@
 lutim_user: www-data
 lutim_group: www-data
 
+lutim_keep_updated: no
+
 #  Required, check the config file itself for more documentation.
 #  lutim_working_dir: "/var/www/lutim.example.com"
 #  lutim_listen: "http://127.0.0.1:8080"

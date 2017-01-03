@@ -9,7 +9,8 @@
   git:
     repo: https://framagit.org/noplanman/lutim.git
     dest: "{{ lutim_working_dir }}"
-    update: no
+    update: "{{ lutim_keep_updated }}"
+  register: lutim_git_updated
   notify: restart lutim
 
 - name: Lutim | Copy config
@@ -23,7 +24,7 @@
   command: carton install
   args:
     chdir: "{{ lutim_working_dir }}"
-    creates: "{{ lutim_db_path }}"
+  when: lutim_git_updated.changed
   notify: restart lutim
 
 - name: Lutim | Set permissions on working directory
