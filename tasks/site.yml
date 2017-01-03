@@ -10,6 +10,7 @@
     repo: https://framagit.org/noplanman/lutim.git
     dest: "{{ lutim_working_dir }}"
     update: "{{ lutim_keep_updated }}"
+    force: yes
   register: lutim_git_updated
   notify: restart lutim
 
