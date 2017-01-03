@@ -24,7 +24,18 @@
   command: carton install
   args:
     chdir: "{{ lutim_working_dir }}"
+    creates: "{{ lutim_db_path }}"
   when: lutim_git_updated.changed
+  register: lutim_app_installed
+  notify: restart lutim
+
+- name: Lutim | Update lutim
+  command: carton update
+  args:
+    chdir: "{{ lutim_working_dir }}"
+  when: not lutim_app_installed.changed and lutim_keep_updated
+  register: lutim_app_updated
+  changed_when: "'Successfully installed' in lutim_app_updated.stdout"
   notify: restart lutim
 
 - name: Lutim | Set permissions on working directory
