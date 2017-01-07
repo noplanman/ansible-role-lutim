@@ -1,8 +1,8 @@
 ---
 
 - include: install.yml
-  tags: lutim.install
+  tags: lutim:install
 - include: site.yml
-  tags: lutim.site
+  tags: lutim:site
 - include: service-{{ ansible_service_mgr }}.yml
-  tags: lutim.service
+  tags: lutim:service

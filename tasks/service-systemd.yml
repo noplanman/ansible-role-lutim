@@ -3,7 +3,7 @@
 - name: Lutim | Copy systemd service config
   template:
     src: lib/systemd/system/lutim.service.j2
-    dest: "/lib/systemd/system/lutim.service"
+    dest: /lib/systemd/system/lutim.service
     owner: root
     group: root
     mode: 0644

@@ -3,7 +3,7 @@
 - name: Lutim | Copy upstart service config
   template:
     src: etc/default/lutim.j2
-    dest: "/etc/default/lutim"
+    dest: /etc/default/lutim
     owner: root
     group: root
     mode: 0644

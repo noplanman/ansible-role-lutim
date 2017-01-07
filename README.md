@@ -22,6 +22,12 @@ lutim_user: www-data
 lutim_group: www-data
 ```
 
+Set if Lutim should be kept up to date. (default: no)
+
+```
+lutim_keep_updated: no
+```
+
 There are a few mandatory and many optional values. Check all possible variables in `defaults/main.yml`.
 
 ```
@@ -30,11 +36,33 @@ lutim_working_dir: "/var/www/example.com"
 lutim_listen: "http://127.0.0.1:8080"
 lutim_contact: "admin@example.com"
 lutim_secrets: ["array", "of", "random", "secrets"]
+
 # Optional
 lutim_theme: "default"
-lutim_hosted_by: 'My super hoster <img src="http://hoster.example.com" alt="Hoster logo">'
-lutim_broadcast_message: "Maintenance"
+lutim_proxy: no
+lutim_url_length: 8
+lutim_crypto_key_length: 8
+lutim_provis_step: 5
+lutim_provisioning: 100
+lutim_anti_flood_delay: 5
+lutim_tweet_card_via: "@framasky"
+lutim_max_file_size: 10485760
+lutim_piwik_img: ""
+lutim_hosted_by: ""
+lutim_broadcast_message: ""
 lutim_allowed_domains: []
+lutim_default_delay: 0
+lutim_max_delay: 0
+lutim_always_encrypt: no
+lutim_token_length: 24
+lutim_prefix: "/"
+lutim_db_path: "lutim.db"
+lutim_thumbnail_size: 100
+lutim_stats_day_num: 365
+lutim_keep_ip_during: 365
+lutim_max_total_size: 10*1024*1024*1024
+lutim_policy_when_full: "warn"
+lutim_delete_no_longer_viewed_files: 90
 ```
 
 ## Role Tags
@@ -42,9 +70,9 @@ lutim_allowed_domains: []
 Each part of the setup has a tag.
 
 ```
-lutim.install
-lutim.site
-lutim.service
+lutim:install
+lutim:site
+lutim:service
 ```
 
 ## Dependencies
