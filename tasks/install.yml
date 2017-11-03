@@ -10,6 +10,8 @@
     - build-essential
     - git
     - libssl-dev
+    - zlib1g-dev # see: https://framagit.org/luc/lutim/issues/53
+    - libpq-dev # required for Mojo::PG (even if PGSQL won't be used)
 
 - name: Lutim | Install cpanm
   get_url:

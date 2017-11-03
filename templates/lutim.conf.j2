@@ -170,12 +170,81 @@
     prefix => '{{ lutim_prefix }}',
 {% endif %}
 
+    # choose what database you want to use
+    # valid choices are sqlite and postgresql (all lowercase)
+    # optional, default is sqlite
+    #dbtype => 'sqlite',
+{% if lutim_db_type is defined %}
+    dbtype => '{{ lutim_db_type }}',
+{% endif %}
+
+    # SQLite ONLY - only used if dbtype is set to sqlite
     # define a path to the SQLite database
     # you can define it relative to lutim directory or set an absolute path
     # remember that it has to be in a directory writable by Lutim user
     # optional, default is lutim.db
     #db_path           => 'lutim.db',
+{% if (lutim_db_type is not defined or lutim_db_type == 'sqlite') and lutim_db_path is defined %}
     db_path => '{{ lutim_db_path }}',
+{% endif %}
+
+    # PostgreSQL ONLY - only used if dbtype is set to postgresql
+    # these are the credentials to access the PostgreSQL database
+    # mandatory if you choosed postgresql as dbtype
+    #pgdb => {
+    #    database => 'lutim',
+    #    host     => 'localhost',
+    #    #user     => 'DBUSER',
+    #    #pwd      => 'DBPASSWORD'
+    #},
+{% if lutim_db_type is defined and lutim_db_type == 'postgresql' and lutim_pgdb is mapping %}
+    pgdb => {
+        {{ "database => '%s'," % lutim_pgdb.database if lutim_pgdb.database }}
+        {{ "host     => '%s'," % lutim_pgdb.host     if lutim_pgdb.host }}
+        {{ "user     => '%s'," % lutim_pgdb.user     if lutim_pgdb.user }}
+        {{ "pwd      => '%s'," % lutim_pgdb.pwd      if lutim_pgdb.pwd }}
+    },
+{% endif %}
+
+    # use Minion instead of directly increase counters
+    # need to launch a minion worker service if enabled
+    # optional, Minion is disabled by default
+    #minion => {
+    #    enabled => 0,
+    #    # Which Minion backend to use?
+    #    # valid values are sqlite and postgresql (all lowercase)
+    #    # mandatory if Minion is enabled, default is sqlite
+    #    dbtype  => 'sqlite',
+    #    # SQLite ONLY - only used if if you choose sqlite as Minion backend, define the path to the minion database
+    #    # you can define it relative to lutim directory or set an absolute path
+    #    # remember that it has to be in a directory writable by Lutim user
+    #    # optional, default is minion.db
+    #    db_path => 'minion.db',
+    #    # PostgreSQL ONLY - only used if you choose postgresql as Minion backend
+    #    # these are the credentials to access the Minion's PostgreSQL database
+    #    # mandatory if you choosed postgresql as Minion backend, no default
+    #    pgdb => {
+    #        database => 'lutim_minion',
+    #        host     => 'localhost',
+    #        #user     => 'DBUSER',
+    #        #pwd      => 'DBPASSWORD'
+    #    }
+    #},
+{% if lutim_minion is mapping %}
+    minion => {
+        {{ "enabled => %s,"   % lutim_minion.enabled | ternary(1,0) if lutim_minion.enabled is defined }}
+        {{ "dbtype  => '%s'," % lutim_minion.db_type                if lutim_minion.db_type }}
+        {{ "db_path => '%s'," % lutim_minion.db_path                if lutim_minion.db_path }}
+{% if minion.pgdb is mapping %}
+        pgdb => {
+            {{ "database => '%s'," % lutim_minion.pgdb.database if lutim_minion.pgdb.database }}
+            {{ "host     => '%s'," % lutim_minion.pgdb.host     if lutim_minion.pgdb.host }}
+            {{ "user     => '%s'," % lutim_minion.pgdb.user     if lutim_minion.pgdb.user }}
+            {{ "pwd      => '%s'," % lutim_minion.pgdb.pwd      if lutim_minion.pgdb.pwd }}
+        },
+{% endif %}
+    },
+{% endif %}
 
     # define the height of the thumbnails generated at users' will
     # this is not the height of the thumbnails send after upload,
@@ -186,6 +255,17 @@
     #thumbnail_size => 100,
 {% if lutim_thumbnail_size is defined %}
     thumbnail_size => {{ lutim_thumbnail_size }},
+{% endif %}
+
+    # maximum number of files that can be downloaded as a single zip archive
+    # if too many files are asked, it results a timeout, so Lutim split the zip URL
+    # in multiple URLs, each with max_file_size images.
+    # timeout behavior depends heavily on your server ressources (CPU) and if images
+    # are encrypted
+    # optional, default is 15
+    #max_files_in_zip => 15,
+{% if lutim_max_files_in_zip is defined %}
+    max_files_in_zip => {{ lutim_max_files_in_zip }},
 {% endif %}
 
     ##########################

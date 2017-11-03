@@ -56,7 +56,22 @@ lutim_max_delay: 0
 lutim_always_encrypt: no
 lutim_token_length: 24
 lutim_prefix: "/"
+lutim_db_type: "sqlite"
 lutim_db_path: "lutim.db"
+lutim_pgdb:
+    database: "lutim"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
+minion:
+    enabled: yes
+    db_type: "sqlite"
+    db_path: "minion.db" # SQLite ONLY
+    pgdb:                # PostgreSQL ONLY
+        database: "lutim_minion"
+        host: "localhost"
+        user: "DBUSER"
+        pwd: "DBPASSWORD"
 lutim_thumbnail_size: 100
 lutim_stats_day_num: 365
 lutim_keep_ip_during: 365
