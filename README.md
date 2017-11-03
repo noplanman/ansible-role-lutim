@@ -33,7 +33,7 @@ There are a few mandatory and many optional values. Check all possible variables
 ```
 # Required!
 lutim_working_dir: "/var/www/example.com"
-lutim_listen: "http://127.0.0.1:8080"
+lutim_listen: "http://127.0.0.1:8080"    # Or an array, if multiple addresses.
 lutim_contact: "admin@example.com"
 lutim_secrets: ["array", "of", "random", "secrets"]
 
@@ -56,7 +56,22 @@ lutim_max_delay: 0
 lutim_always_encrypt: no
 lutim_token_length: 24
 lutim_prefix: "/"
+lutim_db_type: "sqlite"
 lutim_db_path: "lutim.db"
+lutim_pgdb:
+    database: "lutim"
+    host: "localhost"
+    user: "DBUSER"
+    pwd: "DBPASSWORD"
+minion:
+    enabled: yes
+    db_type: "sqlite"
+    db_path: "minion.db" # SQLite ONLY
+    pgdb:                # PostgreSQL ONLY
+        database: "lutim_minion"
+        host: "localhost"
+        user: "DBUSER"
+        pwd: "DBPASSWORD"
 lutim_thumbnail_size: 100
 lutim_stats_day_num: 365
 lutim_keep_ip_during: 365
@@ -99,6 +114,21 @@ lutim_listen: "http://127.0.0.1:8080"
 lutim_contact: "admin@lutim.example.com"
 lutim_secrets: ["eo5jeiD8","OhshiGh2","mieSh0po","iD6ohNg2","gueb4Mee","VoeNgei5","kaV3EeT2","en9Ohshi"]
 lutim_broadcast_message: "Welcome to Lutim. Upload those images!"
+```
+
+## Tests
+
+Docker is used to test the role with different operating systems.
+Unfortunately this doesn't work with boot2docker for MacOS. My current workaround is to have a vagrant machine with docker installed, from which I call the tests. (Yes, a virtual container within a virtual machine...)
+
+*(from `.travis.yml`)*
+```bash
+$ wget -O ${PWD}/tests/test.sh https://gist.githubusercontent.com/noplanman/40e96f31ee2301469769d4236aff40e2/raw/
+$ chmod +x ${PWD}/tests/test.sh
+$ distro=ubuntu1604 ${PWD}/tests/test.sh
+$ distro=ubuntu1404 ${PWD}/tests/test.sh
+$ distro=debian9 ${PWD}/tests/test.sh
+$ distro=debian8 ${PWD}/tests/test.sh
 ```
 
 ## License

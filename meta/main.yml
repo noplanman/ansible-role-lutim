@@ -1,4 +1,6 @@
 ---
+dependencies: []
+
 galaxy_info:
   author: Armando Lüscher
   description: Install and run lutim on a Debian-like system.
@@ -7,16 +9,15 @@ galaxy_info:
   platforms:
     - name: Ubuntu
       versions:
-        - precise
         - trusty
         - xenial
     - name: Debian
       versions:
-        - wheezy
         - jessie
+        - stretch
   galaxy_tags:
     - lutim
     - image
     - images
     - hosting
-dependencies: []
+    - upload
