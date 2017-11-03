@@ -33,7 +33,7 @@ There are a few mandatory and many optional values. Check all possible variables
 ```
 # Required!
 lutim_working_dir: "/var/www/example.com"
-lutim_listen: "http://127.0.0.1:8080"
+lutim_listen: "http://127.0.0.1:8080"    # Or an array, if multiple addresses.
 lutim_contact: "admin@example.com"
 lutim_secrets: ["array", "of", "random", "secrets"]
 

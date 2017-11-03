@@ -8,7 +8,11 @@
     # see http://mojolicio.us/perldoc/Mojo/Server/Hypnotoad for a full list of settings
     hypnotoad => {
         # array of IP addresses and ports you want to listen to
+{% if lutim_listen is string %}
         listen => ['{{ lutim_listen }}'],
+{% else %}
+        listen => {{ lutim_listen | to_json }},
+{% endif %}
         # if you use Lutim behind a reverse proxy like Nginx, you want to set proxy to 1
         # if you use Lutim directly, let it commented
         #proxy  => 1,
