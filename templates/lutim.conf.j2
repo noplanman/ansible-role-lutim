@@ -80,8 +80,8 @@
 
     # twitter account which will appear on twitter cards
     # see https://dev.twitter.com/docs/cards/validation/validator to register your Lutim instance on twitter
-    # optional, default is @framasky
-    #tweet_card_via    => '@framasky',
+    # optional, no default
+    #tweet_card_via    => '@foo',
 {% if lutim_tweet_card_via is defined %}
     tweet_card_via => '{{ lutim_tweet_card_via }}',
 {% endif %}
@@ -137,6 +137,13 @@
     #default_delay     => 0,
 {% if lutim_default_delay is defined %}
     default_delay => {{ lutim_default_delay }},
+{% endif %}
+
+    # comma-separated values proposed for delays
+    # optional, default is '0,1,7,30,365'
+    #proposed_delays         => '0,1,7,30,365',
+{% if lutim_proposed_delays is defined %}
+    proposed_delays => '{{ lutim_proposed_delays }}',
 {% endif %}
 
     # number of days after which the images will be deleted, even if they were uploaded with "no delay" (or value superior to max_delay)
@@ -235,7 +242,7 @@
         {{ "enabled => %s,"   % lutim_minion.enabled | ternary(1,0) if lutim_minion.enabled is defined }}
         {{ "dbtype  => '%s'," % lutim_minion.db_type                if lutim_minion.db_type }}
         {{ "db_path => '%s'," % lutim_minion.db_path                if lutim_minion.db_path }}
-{% if minion.pgdb is mapping %}
+{% if lutim_db_type is defined and lutim_db_type == 'postgresql' and lutim_minion.pgdb is defined and lutim_minion.pgdb is mapping %}
         pgdb => {
             {{ "database => '%s'," % lutim_minion.pgdb.database if lutim_minion.pgdb.database }}
             {{ "host     => '%s'," % lutim_minion.pgdb.host     if lutim_minion.pgdb.host }}
@@ -244,6 +251,53 @@
         },
 {% endif %}
     },
+{% endif %}
+
+    # set `ldap` if you want that only authenticated users can shorten URLs
+    # please note that everybody can still use shortend URLs
+    # optional, no default
+    #ldap => {
+    #    uri         => 'ldaps://ldap.example.org',                 # server URI
+    #    user_tree   => 'ou=users,dc=example,dc=org',               # search base DN
+    #    bind_dn     => 'uid=ldap_user,ou=users,dc=example,dc=org', # search bind DN
+    #    bind_pwd    => 'secr3t',                                   # search bind password
+    #    user_attr   => 'uid',                                      # user attribute (uid, mail, sAMAccountName, etc.)
+    #    user_filter => '(!(uid=ldap_user))',                       # user filter (to exclude some users, etc.)
+    #},
+{% if lutim_ldap is mapping %}
+    ldap => {
+        {{ "uri         => '%s'," % lutim_ldap.uri         if lutim_ldap.uri         }}
+        {{ "user_tree   => '%s'," % lutim_ldap.user_tree   if lutim_ldap.user_tree   }}
+        {{ "bind_dn     => '%s'," % lutim_ldap.bind_dn     if lutim_ldap.bind_dn     }}
+        {{ "bind_pwd    => '%s'," % lutim_ldap.bind_pwd    if lutim_ldap.bind_pwd    }}
+        {{ "user_attr   => '%s'," % lutim_ldap.user_attr   if lutim_ldap.user_attr   }}
+        {{ "user_filter => '%s'," % lutim_ldap.user_filter if lutim_ldap.user_filter }}
+    },
+{% endif %}
+
+    # set `htpasswd` if you want to use an htpasswd file instead of ldap
+    # create the file with `htpasswd -c lutim.passwd user`, update it with `htpasswd lutim.passwd user2`
+    # make sure that lutim can read the file!
+    # optional, no default
+    #htpasswd => 'lutim.passwd',
+{% if lutim_htpasswd is defined %}
+    htpasswd => '{{ lutim_htpasswd }}',
+{% endif %}
+
+    # if you've set ldap or htpasswd above, the session will last `session_duration` seconds before
+    # the user needs to reauthenticate
+    # optional, default is 3600
+    #session_duration => 3600,
+{% if lutim_session_duration is defined %}
+    session_duration => {{ lutim_session_duration }},
+{% endif %}
+
+    # disable counters of images
+    # set to 1 to disable counters
+    # optional, counters are enabled by default
+    #disable_img_stats => 0,
+{% if lutim_disable_img_stats is defined %}
+    disable_img_stats => {{ lutim_disable_img_stats | ternary(1,0) }},
 {% endif %}
 
     # define the height of the thumbnails generated at users' will
@@ -266,6 +320,90 @@
     #max_files_in_zip => 15,
 {% if lutim_max_files_in_zip is defined %}
     max_files_in_zip => {{ lutim_max_files_in_zip }},
+{% endif %}
+
+    # maximum size (in MB) of memory allowed for the image cache
+    # Lutim has a built-in memory-based image cache to accelerate responses to often-viewed images.
+    # This setting makes the cache remove oldest viewed image if the cache size is over it.
+    # WARNING: a cache is created for each hypnotoad worker, which by default is twice the number of
+    # CPUs you have. See http://mojolicious.org/perldoc/Mojo/Server/Hypnotoad#workers for details
+    # So, if you have 4 workers and set cache_max_size to 100, the real maximum size of RAM used for
+    # cache is 400MB.
+    # If set to 0, the cache is disabled
+    # optional, default is 0
+    #cache_max_size => 0,
+{% if lutim_cache_max_size is defined %}
+    cache_max_size => {{ lutim_cache_max_size }},
+{% endif %}
+
+    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URL.
+    # If set to [], the use of memcached is disabled.
+    # If you use memcached, the internal cache (see cache_max_size option above) will not be used.
+    # Please see https://framagit.org/luc/lutim/wikis/memcached to know how to configure your memcached
+    # servers.
+    # exemple of valid value: ['127.0.0.1:11211']
+    # optional, default is []
+    #memcached_servers => [],
+{% if lutim_memcached_servers is defined %}
+    memcached_servers => {{ lutim_memcached_servers | to_json }},
+{% endif %}
+
+    # enable or disable Lutim built-in logs
+    # set to 1 to disable logs
+    # optional, default is 0
+    #quiet_logs => 0,
+{% if lutim_quiet_logs is defined %}
+    quiet_logs => {{ lutim_quiet_logs | ternary(1,0) }},
+{% endif %}
+
+    # Content-Security-Policy header that will be sent by Lstu
+    # Set to '' to disable CSP header
+    # https://content-security-policy.com/ provides a good documentation about CSP.
+    # https://report-uri.com/home/generate provides a tool to generate a CSP header.
+    # optional, default is "base-uri 'self'; connect-src 'self'; default-src 'none'; font-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'"
+    # NB: unsafe-inline for script-src and style-src are here only because morris,
+    # the graph library used in the stats page requires it
+    # the default value is good for `default` theme
+    #csp => "base-uri 'self'; connect-src 'self'; default-src 'none'; font-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
+{% if lutim_csp is defined %}
+    csp => "{{ lutim_csp }}",
+{% endif %}
+
+    # X-Frame-Options header that will be sent by Lstu
+    # Valid values are: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM https://example.com/'
+    # Set to '' to disable X-Frame-Options header
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+    # Please note that this will add a "frame-ancestors" directive to the CSP header (see above) accordingly
+    # to the chosen setting (See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
+    # optional, default is 'DENY'
+    #x_frame_options => 'DENY',
+{% if lutim_x_frame_options is defined %}
+    x_frame_options => '{{ lutim_x_frame_options }}',
+{% endif %}
+
+    # X-Content-Type-Options that will be sent by Lstu
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
+    # Set to '' to disable X-Content-Type-Options header
+    # optional, default is 'nosniff'
+    #x_content_type_options => 'nosniff',
+{% if lutim_x_content_type_options is defined %}
+    x_content_type_options => '{{ lutim_x_content_type_options }}',
+{% endif %}
+
+    # X-XSS-Protection that will be sent by Lstu
+    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+    # Set to '' to disable X-XSS-Protection header
+    # optional, default is '1; mode=block'
+    #x_xss_protection => '1; mode=block',
+{% if lutim_x_xss_protection is defined %}
+    x_xss_protection => '{{ lutim_x_xss_protection }}',
+{% endif %}
+
+    # if set, the uploaded images will use this domain
+    # optional
+    #fixed_domain => 'example.org',
+{% if lutim_fixed_domain is defined %}
+    fixed_domain => '{{ lutim_fixed_domain }}',
 {% endif %}
 
     ##########################

@@ -53,7 +53,7 @@ lutim_crypto_key_length: 8
 lutim_provis_step: 5
 lutim_provisioning: 100
 lutim_anti_flood_delay: 5
-lutim_tweet_card_via: "@framasky"
+lutim_tweet_card_via: "@foo"
 lutim_max_file_size: 10485760
 lutim_piwik_img: ""
 lutim_hosted_by: ""
@@ -80,7 +80,26 @@ minion:
         host: "localhost"
         user: "DBUSER"
         pwd: "DBPASSWORD"
+lutim_ldap:
+    uri: "ldaps://ldap.example.org"
+    user_tree: "ou=users,dc=example,dc=org"
+    bind_dn: "uid=ldap_user,ou=users,dc=example,dc=org"
+    bind_pwd: "secr3t"
+    user_attr: "uid"
+    user_filter: "(!(uid=ldap_user))"
+lutim_htpasswd: "lutim.passwd"
+lutim_session_duration: 3600
+lutim_disable_img_stats: no
 lutim_thumbnail_size: 100
+lutim_max_files_in_zip: 15
+lutim_cache_max_size: 0
+lutim_memcached_servers: []
+lutim_quiet_logs: no
+lutim_csp: "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; form-action 'self'; base-uri 'self'"
+lutim_x_frame_options: "DENY"
+lutim_x_content_type_options: "nosniff"
+lutim_x_xss_protection: "1; mode=block"
+lutim_fixed_domain: "example.org"
 lutim_stats_day_num: 365
 lutim_keep_ip_during: 365
 lutim_max_total_size: 10*1024*1024*1024
