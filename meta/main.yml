@@ -2,8 +2,9 @@
 dependencies: []
 
 galaxy_info:
+  role_name: lutim
+  description: Install and run Lutim on a Debian-like system.
   author: Armando Lüscher
-  description: Install and run lutim on a Debian-like system.
   license: MIT
   min_ansible_version: 2.0.0.0
   platforms:

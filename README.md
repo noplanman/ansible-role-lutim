@@ -1,9 +1,17 @@
 # Ansible Role for Lutim (Let's Upload That Image)
 
-[![Build Status](https://travis-ci.org/noplanman/ansible-lutim.svg?branch=master)](https://travis-ci.org/noplanman/ansible-lutim)
+[![Build Status][travis-build-status]][travis-tests]
 
-Installs and configures Lutim on Debian/Ubuntu servers.
-Find out more about Lutim [here](https://framagit.org/luc/lutim), created by [Luc Didry](https://framagit.org/u/luc).
+---
+
+:rocket: Development has moved to **[git.feneas.org]**.
+
+(The repository on GitHub is only a mirror, so fork on Feneas to contribute. No registration needed, just sign in with your GitHub account.)
+
+---
+
+This role installs and configures Lutim on Debian/Ubuntu servers.
+Find out more about [Lutim], created by [Luc Didry].
 
 This role will automatically install a service that will start when the server boots up.
 It will figure out which service manager is being used automatically too.
@@ -11,7 +19,7 @@ It will figure out which service manager is being used automatically too.
 ## Requirements
 
 Using this role doesn't install Nginx or Apache as a reverse proxy, you need to do that yourself!
-An example configuration for Nginx can be found [here](https://framagit.org/luc/lutim/wikis/installation#putting-lutim-behind-nginx).
+Take a look at the [example configurations].
 
 ## Role Variables
 
@@ -28,7 +36,7 @@ Set if Lutim should be kept up to date. (default: no)
 lutim_keep_updated: no
 ```
 
-There are a few mandatory and many optional values. Check all possible variables in `defaults/main.yml`.
+There are a few mandatory and many optional values. Check all possible variables in [`defaults/main.yml`][defaults].
 
 ```
 # Required!
@@ -119,7 +127,6 @@ lutim_broadcast_message: "Welcome to Lutim. Upload those images!"
 ## Tests
 
 Docker is used to test the role with different operating systems.
-Unfortunately this doesn't work with boot2docker for MacOS. My current workaround is to have a vagrant machine with docker installed, from which I call the tests. (Yes, a virtual container within a virtual machine...)
 
 *(from `.travis.yml`)*
 ```bash
@@ -134,3 +141,11 @@ $ distro=debian8 ${PWD}/tests/test.sh
 ## License
 
 MIT
+
+[travis-build-status]: https://travis-ci.org/noplanman/ansible-role-lutim.svg?branch=master "Travis-CI Build Status"
+[travis-tests]: https://travis-ci.org/noplanman/ansible-role-lutim "Travis-CI Tests"
+[git.feneas.org]: https://git.feneas.org/noplanman/ansible-role-lutim "Ansible Role Lutim on Feneas"
+[Lutim]: https://framagit.org/luc/lutim "Lutim on Framagit"
+[Luc Didry]: https://framagit.org/u/luc "Luc on Framagit"
+[example configurations]: https://framagit.org/luc/lutim/wikis/installation#putting-lutim-behind-nginx "Example configurations"
+[defaults]: https://git.feneas.org/noplanman/ansible-role-lutim/blob/master/defaults/main.yml "Default variables"
