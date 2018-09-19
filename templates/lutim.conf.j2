@@ -1,452 +1,85 @@
 # {{ ansible_managed }}
 
-# vim:set sw=4 ts=4 sts=4 ft=perl expandtab:
+####################
+# Get the in-depth version with detailed explanations here:
+# https://framagit.org/luc/lutim/blob/master/lutim.conf.template
+####################
 {
-    ####################
-    # Hypnotoad settings
-    ####################
-    # see http://mojolicio.us/perldoc/Mojo/Server/Hypnotoad for a full list of settings
     hypnotoad => {
-        # array of IP addresses and ports you want to listen to
-{% if lutim_listen is string %}
-        listen => ['{{ lutim_listen }}'],
-{% else %}
-        listen => {{ lutim_listen | to_json }},
-{% endif %}
-        # if you use Lutim behind a reverse proxy like Nginx, you want to set proxy to 1
-        # if you use Lutim directly, let it commented
-        #proxy  => 1,
-{% if lutim_proxy is defined %}
-        proxy => {{ lutim_proxy | ternary(1,0) }},
-{% endif %}
+        listen => {{ [lutim_listen] | flatten | to_json }},
+{{ "        proxy => %s," % lutim_proxy | ternary(1,0) if lutim_proxy is defined else "" }}
     },
-
-    ################
-    # Lutim settings
-    ################
-
-    # put a way to contact you here and uncomment it
-    # mandatory
-    #contact       => 'admin[at]example.com',
     contact => '{{ lutim_contact }}',
-
-    # random string used to encrypt cookies
-    # mandatory
-    #secrets        => ['fdjsofjoihrei'],
     secrets => {{ lutim_secrets | to_json }},
-
-    # choose a theme. See the available themes in `themes` directory
-    # optional, default is 'default'
-    #theme         => 'default',
-{% if lutim_theme is defined %}
-    theme => '{{ lutim_theme }}',
-{% endif %}
-
-    # length of the images random URL
-    # optional, default is 8
-    #length            => 8,
-{% if lutim_url_length is defined %}
-    length => {{ lutim_url_length }},
-{% endif %}
-
-    # length of the encryption key
-    # optional, default is 8
-    #crypto_key_length => 8,
-{% if lutim_crypto_key_length is defined %}
-    crypto_key_length => {{ lutim_crypto_key_length }},
-{% endif %}
-
-    # how many URLs will be provisioned in a batch ?
-    # optional, default is 5
-    #provis_step       => 5,
-{% if lutim_provis_step is defined %}
-    provis_step => {{ lutim_provis_step }},
-{% endif %}
-
-    # max number of URLs to be provisioned
-    # optional, default is 100
-    #provisioning      => 100,
-{% if lutim_provisioning is defined %}
-    provisioning => {{ lutim_provisioning }},
-{% endif %}
-
-    # anti-flood protection delay, in seconds
-    # users won't be able to ask Lutim to download images more than one per anti_flood_delay seconds
-    # optional, default is 5
-    #anti_flood_delay  => 5,
-{% if lutim_anti_flood_delay is defined %}
-    anti_flood_delay => {{ lutim_anti_flood_delay }},
-{% endif %}
-
-    # twitter account which will appear on twitter cards
-    # see https://dev.twitter.com/docs/cards/validation/validator to register your Lutim instance on twitter
-    # optional, no default
-    #tweet_card_via    => '@foo',
-{% if lutim_tweet_card_via is defined %}
-    tweet_card_via => '{{ lutim_tweet_card_via }}',
-{% endif %}
-
-    # max image size, in octets
-    # you can write it 10*1024*1024
-    # optional, default is 10485760
-    #max_file_size     => 10485760,
-{% if lutim_max_file_size is defined %}
-    max_file_size => {{ lutim_max_file_size }},
-{% endif %}
-
-    # if you want to have piwik statistics, provide a piwik image tracker
-    # only the image tracker is allowed, no javascript
-    # optional, no default
-    #piwik_img         => 'https://piwik.example.org/piwik.php?idsite=1&amp;rec=1',
-{% if lutim_piwik_img is defined %}
-    piwik_img => '{{ lutim_piwik_img }}',
-{% endif %}
-
-    # if you want to include something in the right of the screen, put it here
-    # here's an exemple to put the logo of your hoster
-    # optional, no default
-    #hosted_by         => 'My super hoster <img src="http://hoster.example.com" alt="Hoster logo">',
-{% if lutim_hosted_by is defined %}
-    hosted_by => '{{ lutim_hosted_by }}',
-{% endif %}
-
-    # DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED DEPRECATED
-    # Lutim now checks if the X-Forwarded-Proto header is present and equal to https.
-    # set to 1 if you use Lutim behind a secure web server
-    # optional, default is 0
-    #https             => 0,
-
-    # broadcast_message which will displayed on all pages of Lutim (but no in json response)
-    # optional, no default
-    #broadcast_message => 'Maintenance',
-{% if lutim_broadcast_message is defined %}
-    broadcast_message => '{{ lutim_broadcast_message }}',
-{% endif %}
-
-    # array of authorized domains for API calls.
-    # if you want to authorize everyone to use the API: ['*']
-    # optional, no domains allowed by default
-    #allowed_domains   => ['http://1.example.com', 'http://2.example.com'],
-{% if lutim_allowed_domains is defined %}
-    allowed_domains => {{ lutim_allowed_domains | to_json }},
-{% endif %}
-
-    # default time limit for files
-    # valid values are 0, 1, 7, 30 and 365
-    # optional, default is 0 (no limit)
-    #default_delay     => 0,
-{% if lutim_default_delay is defined %}
-    default_delay => {{ lutim_default_delay }},
-{% endif %}
-
-    # comma-separated values proposed for delays
-    # optional, default is '0,1,7,30,365'
-    #proposed_delays         => '0,1,7,30,365',
-{% if lutim_proposed_delays is defined %}
-    proposed_delays => '{{ lutim_proposed_delays }}',
-{% endif %}
-
-    # number of days after which the images will be deleted, even if they were uploaded with "no delay" (or value superior to max_delay)
-    # a warning message will be displayed on homepage
-    # optional, default is 0 (no limit)
-    #max_delay         => 0,
-{% if lutim_max_delay is defined %}
-    max_delay => {{ lutim_max_delay }},
-{% endif %}
-
-    # if set to 1, all the images will be encrypted and the encryption option will no be displayed
-    # optional, default is 0
-    #always_encrypt    => 0,
-{% if lutim_always_encrypt is defined %}
-    always_encrypt => {{ lutim_always_encrypt | ternary(1,0) }},
-{% endif %}
-
-    # length of the image's delete token
-    # optional, default is 24
-    #token_length      => 24,
-{% if lutim_token_length is defined %}
-    token_length => {{ lutim_token_length }},
-{% endif %}
-
-    # URL sub-directory in which you want Lutim to be accessible
-    # example: you want to have Lutim under https://example.org/lutim/
-    # => set prefix to '/lutim' or to '/lutim/', it doesn't matter
-    # optional, defaut is /
-    #prefix            => '/',
-{% if lutim_prefix is defined %}
-    prefix => '{{ lutim_prefix }}',
-{% endif %}
-
-    # choose what database you want to use
-    # valid choices are sqlite and postgresql (all lowercase)
-    # optional, default is sqlite
-    #dbtype => 'sqlite',
-{% if lutim_db_type is defined %}
-    dbtype => '{{ lutim_db_type }}',
-{% endif %}
-
-    # SQLite ONLY - only used if dbtype is set to sqlite
-    # define a path to the SQLite database
-    # you can define it relative to lutim directory or set an absolute path
-    # remember that it has to be in a directory writable by Lutim user
-    # optional, default is lutim.db
-    #db_path           => 'lutim.db',
-{% if (lutim_db_type is not defined or lutim_db_type == 'sqlite') and lutim_db_path is defined %}
-    db_path => '{{ lutim_db_path }}',
-{% endif %}
-
-    # PostgreSQL ONLY - only used if dbtype is set to postgresql
-    # these are the credentials to access the PostgreSQL database
-    # mandatory if you choosed postgresql as dbtype
-    #pgdb => {
-    #    database => 'lutim',
-    #    host     => 'localhost',
-    #    #user     => 'DBUSER',
-    #    #pwd      => 'DBPASSWORD'
-    #},
+{{ "    theme => '%s',"             % lutim_theme                         if lutim_theme is defined             else "" }}
+{{ "    length => %s,"              % lutim_url_length                    if lutim_url_length is defined        else "" }}
+{{ "    crypto_key_length => %s,"   % lutim_crypto_key_length             if lutim_crypto_key_length is defined else "" }}
+{{ "    provis_step => %s,"         % lutim_provis_step                   if lutim_provis_step is defined       else "" }}
+{{ "    provisioning => %s,"        % lutim_provisioning                  if lutim_provisioning is defined      else "" }}
+{{ "    anti_flood_delay => %s,"    % lutim_anti_flood_delay              if lutim_anti_flood_delay is defined  else "" }}
+{{ "    tweet_card_via => '%s',"    % lutim_tweet_card_via                if lutim_tweet_card_via is defined    else "" }}
+{{ "    max_file_size => %s,"       % lutim_max_file_size                 if lutim_max_file_size is defined     else "" }}
+{{ "    piwik_img => '%s',"         % lutim_piwik_img                     if lutim_piwik_img is defined         else "" }}
+{{ "    hosted_by => '%s',"         % lutim_hosted_by                     if lutim_hosted_by is defined         else "" }}
+{{ "    broadcast_message => '%s'," % lutim_broadcast_message             if lutim_broadcast_message is defined else "" }}
+{{ "    allowed_domains => %s,"     % lutim_allowed_domains | to_json     if lutim_allowed_domains is defined   else "" }}
+{{ "    default_delay => %s,"       % lutim_default_delay                 if lutim_default_delay is defined     else "" }}
+{{ "    proposed_delays => '%s',"   % lutim_proposed_delays               if lutim_proposed_delays is defined   else "" }}
+{{ "    max_delay => %s,"           % lutim_max_delay                     if lutim_max_delay is defined         else "" }}
+{{ "    always_encrypt => %s,"      % lutim_always_encrypt | ternary(1,0) if lutim_always_encrypt is defined    else "" }}
+{{ "    token_length => %s,"        % lutim_token_length                  if lutim_token_length is defined      else "" }}
+{{ "    prefix => '%s',"            % lutim_prefix                        if lutim_prefix is defined            else "" }}
+{{ "    dbtype => '%s',"            % lutim_db_type                       if lutim_db_type is defined           else "" }}
+{{ "    db_path => '%s',"           % lutim_db_path                       if (lutim_db_type is not defined or lutim_db_type == 'sqlite') and lutim_db_path is defined else "" }}
 {% if lutim_db_type is defined and lutim_db_type == 'postgresql' and lutim_pgdb is mapping %}
     pgdb => {
-        {{ "database => '%s'," % lutim_pgdb.database if lutim_pgdb.database }}
-        {{ "host     => '%s'," % lutim_pgdb.host     if lutim_pgdb.host }}
-        {{ "user     => '%s'," % lutim_pgdb.user     if lutim_pgdb.user }}
-        {{ "pwd      => '%s'," % lutim_pgdb.pwd      if lutim_pgdb.pwd }}
+        {{ "database => '%s'," % lutim_pgdb.database if lutim_pgdb.database else "" }}
+        {{ "host     => '%s'," % lutim_pgdb.host     if lutim_pgdb.host     else "" }}
+        {{ "user     => '%s'," % lutim_pgdb.user     if lutim_pgdb.user     else "" }}
+        {{ "pwd      => '%s'," % lutim_pgdb.pwd      if lutim_pgdb.pwd      else "" }}
     },
 {% endif %}
-
-    # use Minion instead of directly increase counters
-    # need to launch a minion worker service if enabled
-    # optional, Minion is disabled by default
-    #minion => {
-    #    enabled => 0,
-    #    # Which Minion backend to use?
-    #    # valid values are sqlite and postgresql (all lowercase)
-    #    # mandatory if Minion is enabled, default is sqlite
-    #    dbtype  => 'sqlite',
-    #    # SQLite ONLY - only used if if you choose sqlite as Minion backend, define the path to the minion database
-    #    # you can define it relative to lutim directory or set an absolute path
-    #    # remember that it has to be in a directory writable by Lutim user
-    #    # optional, default is minion.db
-    #    db_path => 'minion.db',
-    #    # PostgreSQL ONLY - only used if you choose postgresql as Minion backend
-    #    # these are the credentials to access the Minion's PostgreSQL database
-    #    # mandatory if you choosed postgresql as Minion backend, no default
-    #    pgdb => {
-    #        database => 'lutim_minion',
-    #        host     => 'localhost',
-    #        #user     => 'DBUSER',
-    #        #pwd      => 'DBPASSWORD'
-    #    }
-    #},
 {% if lutim_minion is mapping %}
     minion => {
-        {{ "enabled => %s,"   % lutim_minion.enabled | ternary(1,0) if lutim_minion.enabled is defined }}
-        {{ "dbtype  => '%s'," % lutim_minion.db_type                if lutim_minion.db_type }}
-        {{ "db_path => '%s'," % lutim_minion.db_path                if lutim_minion.db_path }}
+        {{ "enabled => %s,"   % lutim_minion.enabled | ternary(1,0) if lutim_minion.enabled is defined else "" }}
+        {{ "dbtype  => '%s'," % lutim_minion.db_type                if lutim_minion.db_type            else "" }}
+        {{ "db_path => '%s'," % lutim_minion.db_path                if lutim_minion.db_path            else "" }}
 {% if lutim_db_type is defined and lutim_db_type == 'postgresql' and lutim_minion.pgdb is defined and lutim_minion.pgdb is mapping %}
         pgdb => {
-            {{ "database => '%s'," % lutim_minion.pgdb.database if lutim_minion.pgdb.database }}
-            {{ "host     => '%s'," % lutim_minion.pgdb.host     if lutim_minion.pgdb.host }}
-            {{ "user     => '%s'," % lutim_minion.pgdb.user     if lutim_minion.pgdb.user }}
-            {{ "pwd      => '%s'," % lutim_minion.pgdb.pwd      if lutim_minion.pgdb.pwd }}
+            {{ "database => '%s'," % lutim_minion.pgdb.database if lutim_minion.pgdb.database else "" }}
+            {{ "host     => '%s'," % lutim_minion.pgdb.host     if lutim_minion.pgdb.host     else "" }}
+            {{ "user     => '%s'," % lutim_minion.pgdb.user     if lutim_minion.pgdb.user     else "" }}
+            {{ "pwd      => '%s'," % lutim_minion.pgdb.pwd      if lutim_minion.pgdb.pwd      else "" }}
         },
 {% endif %}
     },
 {% endif %}
-
-    # set `ldap` if you want that only authenticated users can shorten URLs
-    # please note that everybody can still use shortend URLs
-    # optional, no default
-    #ldap => {
-    #    uri         => 'ldaps://ldap.example.org',                 # server URI
-    #    user_tree   => 'ou=users,dc=example,dc=org',               # search base DN
-    #    bind_dn     => 'uid=ldap_user,ou=users,dc=example,dc=org', # search bind DN
-    #    bind_pwd    => 'secr3t',                                   # search bind password
-    #    user_attr   => 'uid',                                      # user attribute (uid, mail, sAMAccountName, etc.)
-    #    user_filter => '(!(uid=ldap_user))',                       # user filter (to exclude some users, etc.)
-    #},
 {% if lutim_ldap is mapping %}
     ldap => {
-        {{ "uri         => '%s'," % lutim_ldap.uri         if lutim_ldap.uri         }}
-        {{ "user_tree   => '%s'," % lutim_ldap.user_tree   if lutim_ldap.user_tree   }}
-        {{ "bind_dn     => '%s'," % lutim_ldap.bind_dn     if lutim_ldap.bind_dn     }}
-        {{ "bind_pwd    => '%s'," % lutim_ldap.bind_pwd    if lutim_ldap.bind_pwd    }}
-        {{ "user_attr   => '%s'," % lutim_ldap.user_attr   if lutim_ldap.user_attr   }}
-        {{ "user_filter => '%s'," % lutim_ldap.user_filter if lutim_ldap.user_filter }}
+        {{ "uri         => '%s'," % lutim_ldap.uri         if lutim_ldap.uri         else "" }}
+        {{ "user_tree   => '%s'," % lutim_ldap.user_tree   if lutim_ldap.user_tree   else "" }}
+        {{ "bind_dn     => '%s'," % lutim_ldap.bind_dn     if lutim_ldap.bind_dn     else "" }}
+        {{ "bind_pwd    => '%s'," % lutim_ldap.bind_pwd    if lutim_ldap.bind_pwd    else "" }}
+        {{ "user_attr   => '%s'," % lutim_ldap.user_attr   if lutim_ldap.user_attr   else "" }}
+        {{ "user_filter => '%s'," % lutim_ldap.user_filter if lutim_ldap.user_filter else "" }}
     },
 {% endif %}
-
-    # set `htpasswd` if you want to use an htpasswd file instead of ldap
-    # create the file with `htpasswd -c lutim.passwd user`, update it with `htpasswd lutim.passwd user2`
-    # make sure that lutim can read the file!
-    # optional, no default
-    #htpasswd => 'lutim.passwd',
-{% if lutim_htpasswd is defined %}
-    htpasswd => '{{ lutim_htpasswd }}',
-{% endif %}
-
-    # if you've set ldap or htpasswd above, the session will last `session_duration` seconds before
-    # the user needs to reauthenticate
-    # optional, default is 3600
-    #session_duration => 3600,
-{% if lutim_session_duration is defined %}
-    session_duration => {{ lutim_session_duration }},
-{% endif %}
-
-    # disable counters of images
-    # set to 1 to disable counters
-    # optional, counters are enabled by default
-    #disable_img_stats => 0,
-{% if lutim_disable_img_stats is defined %}
-    disable_img_stats => {{ lutim_disable_img_stats | ternary(1,0) }},
-{% endif %}
-
-    # define the height of the thumbnails generated at users' will
-    # this is not the height of the thumbnails send after upload,
-    # we're talking about thumbnails generated when someone asked for
-    # https://example.org/lutim/tesrinp?thumb
-    # this works only if you have ImageMagick
-    # optional, default is 100 (pixels)
-    #thumbnail_size => 100,
-{% if lutim_thumbnail_size is defined %}
-    thumbnail_size => {{ lutim_thumbnail_size }},
-{% endif %}
-
-    # maximum number of files that can be downloaded as a single zip archive
-    # if too many files are asked, it results a timeout, so Lutim split the zip URL
-    # in multiple URLs, each with max_file_size images.
-    # timeout behavior depends heavily on your server ressources (CPU) and if images
-    # are encrypted
-    # optional, default is 15
-    #max_files_in_zip => 15,
-{% if lutim_max_files_in_zip is defined %}
-    max_files_in_zip => {{ lutim_max_files_in_zip }},
-{% endif %}
-
-    # maximum size (in MB) of memory allowed for the image cache
-    # Lutim has a built-in memory-based image cache to accelerate responses to often-viewed images.
-    # This setting makes the cache remove oldest viewed image if the cache size is over it.
-    # WARNING: a cache is created for each hypnotoad worker, which by default is twice the number of
-    # CPUs you have. See http://mojolicious.org/perldoc/Mojo/Server/Hypnotoad#workers for details
-    # So, if you have 4 workers and set cache_max_size to 100, the real maximum size of RAM used for
-    # cache is 400MB.
-    # If set to 0, the cache is disabled
-    # optional, default is 0
-    #cache_max_size => 0,
-{% if lutim_cache_max_size is defined %}
-    cache_max_size => {{ lutim_cache_max_size }},
-{% endif %}
-
-    # array of memcached servers to cache URL in order to accelerate responses to often-viewed URL.
-    # If set to [], the use of memcached is disabled.
-    # If you use memcached, the internal cache (see cache_max_size option above) will not be used.
-    # Please see https://framagit.org/luc/lutim/wikis/memcached to know how to configure your memcached
-    # servers.
-    # exemple of valid value: ['127.0.0.1:11211']
-    # optional, default is []
-    #memcached_servers => [],
-{% if lutim_memcached_servers is defined %}
-    memcached_servers => {{ lutim_memcached_servers | to_json }},
-{% endif %}
-
-    # enable or disable Lutim built-in logs
-    # set to 1 to disable logs
-    # optional, default is 0
-    #quiet_logs => 0,
-{% if lutim_quiet_logs is defined %}
-    quiet_logs => {{ lutim_quiet_logs | ternary(1,0) }},
-{% endif %}
-
-    # Content-Security-Policy header that will be sent by Lstu
-    # Set to '' to disable CSP header
-    # https://content-security-policy.com/ provides a good documentation about CSP.
-    # https://report-uri.com/home/generate provides a tool to generate a CSP header.
-    # optional, default is "base-uri 'self'; connect-src 'self'; default-src 'none'; font-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'"
-    # NB: unsafe-inline for script-src and style-src are here only because morris,
-    # the graph library used in the stats page requires it
-    # the default value is good for `default` theme
-    #csp => "base-uri 'self'; connect-src 'self'; default-src 'none'; font-src 'self'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
-{% if lutim_csp is defined %}
-    csp => "{{ lutim_csp }}",
-{% endif %}
-
-    # X-Frame-Options header that will be sent by Lstu
-    # Valid values are: 'DENY', 'SAMEORIGIN', 'ALLOW-FROM https://example.com/'
-    # Set to '' to disable X-Frame-Options header
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-    # Please note that this will add a "frame-ancestors" directive to the CSP header (see above) accordingly
-    # to the chosen setting (See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors)
-    # optional, default is 'DENY'
-    #x_frame_options => 'DENY',
-{% if lutim_x_frame_options is defined %}
-    x_frame_options => '{{ lutim_x_frame_options }}',
-{% endif %}
-
-    # X-Content-Type-Options that will be sent by Lstu
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
-    # Set to '' to disable X-Content-Type-Options header
-    # optional, default is 'nosniff'
-    #x_content_type_options => 'nosniff',
-{% if lutim_x_content_type_options is defined %}
-    x_content_type_options => '{{ lutim_x_content_type_options }}',
-{% endif %}
-
-    # X-XSS-Protection that will be sent by Lstu
-    # See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
-    # Set to '' to disable X-XSS-Protection header
-    # optional, default is '1; mode=block'
-    #x_xss_protection => '1; mode=block',
-{% if lutim_x_xss_protection is defined %}
-    x_xss_protection => '{{ lutim_x_xss_protection }}',
-{% endif %}
-
-    # if set, the uploaded images will use this domain
-    # optional
-    #fixed_domain => 'example.org',
-{% if lutim_fixed_domain is defined %}
-    fixed_domain => '{{ lutim_fixed_domain }}',
-{% endif %}
-
-    ##########################
-    # Lutim cron jobs settings
-    ##########################
-
-    # number of days shown in /stats page (used with script/lutim cron stats)
-    # optional, default is 365
-    #stats_day_num     => 365,
-{% if lutim_stats_day_num is defined %}
-    stats_day_num => {{ lutim_stats_day_num }},
-{% endif %}
-
-    # number of days senders' IP addresses are kept in database
-    # after that delay, they will be deleted from database (used with script/lutim cron cleanbdd)
-    # optional, default is 365
-    #keep_ip_during    => 365,
-{% if lutim_keep_ip_during is defined %}
-    keep_ip_during => {{ lutim_keep_ip_during }},
-{% endif %}
-
-    # max size of the files directory, in octets
-    # used by script/lutim cron watch to trigger an action
-    # optional, no default
-    #max_total_size    => 10*1024*1024*1024,
-{% if lutim_max_total_size is defined %}
-    max_total_size => {{ lutim_max_total_size }},
-{% endif %}
-
-    # default action when files directory is over max_total_size (used with script/lutim cron watch)
-    # valid values are 'warn', 'stop-upload' and 'delete'
-    # please, see readme
-    # optional, default is 'warn'
-    #policy_when_full  => 'warn',
-{% if lutim_policy_when_full is defined %}
-    policy_when_full => '{{ lutim_policy_when_full }}',
-{% endif %}
-
-    # images which are not viewed since delete_no_longer_viewed_files days will be deleted by the cron cleanfiles task
-    # if delete_no_longer_viewed_files is not set, the no longer viewed files will NOT be deleted
-    # optional, no default
-    #delete_no_longer_viewed_files => 90
-{% if lutim_delete_no_longer_viewed_files is defined %}
-    delete_no_longer_viewed_files => {{ lutim_delete_no_longer_viewed_files }},
-{% endif %}
+{{ "    htpasswd => '%s',"                    % lutim_htpasswd                         if lutim_htpasswd is defined                      else "" }}
+{{ "    session_duration => %s,"              % lutim_session_duration                 if lutim_session_duration is defined              else "" }}
+{{ "    disable_img_stats => %s,"             % lutim_disable_img_stats | ternary(1,0) if lutim_disable_img_stats is defined             else "" }}
+{{ "    thumbnail_size => %s,"                % lutim_thumbnail_size                   if lutim_thumbnail_size is defined                else "" }}
+{{ "    max_files_in_zip => %s,"              % lutim_max_files_in_zip                 if lutim_max_files_in_zip is defined              else "" }}
+{{ "    cache_max_size => %s,"                % lutim_cache_max_size                   if lutim_cache_max_size is defined                else "" }}
+{{ "    memcached_servers => %s,"             % lutim_memcached_servers | to_json      if lutim_memcached_servers is defined             else "" }}
+{{ "    quiet_logs => %s,"                    % lutim_quiet_logs | ternary(1,0)        if lutim_quiet_logs is defined                    else "" }}
+{{ "    csp => \"%s\","                       % lutim_csp                              if lutim_csp is defined                           else "" }}
+{{ "    x_frame_options => '%s',"             % lutim_x_frame_options                  if lutim_x_frame_options is defined               else "" }}
+{{ "    x_content_type_options => '%s',"      % lutim_x_content_type_options           if lutim_x_content_type_options is defined        else "" }}
+{{ "    x_xss_protection => '%s',"            % lutim_x_xss_protection                 if lutim_x_xss_protection is defined              else "" }}
+{{ "    fixed_domain => '%s',"                % lutim_fixed_domain                     if lutim_fixed_domain is defined                  else "" }}
+{{ "    stats_day_num => %s,"                 % lutim_stats_day_num                    if lutim_stats_day_num is defined                 else "" }}
+{{ "    keep_ip_during => %s,"                % lutim_keep_ip_during                   if lutim_keep_ip_during is defined                else "" }}
+{{ "    max_total_size => %s,"                % lutim_max_total_size                   if lutim_max_total_size is defined                else "" }}
+{{ "    policy_when_full => '%s',"            % lutim_policy_when_full                 if lutim_policy_when_full is defined              else "" }}
+{{ "    delete_no_longer_viewed_files => %s," % lutim_delete_no_longer_viewed_files    if lutim_delete_no_longer_viewed_files is defined else "" }}
 };
